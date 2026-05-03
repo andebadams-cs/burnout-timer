@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Burnout Timer">
+<title>Burnout Timer</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0a0a0a;
+    color: #fff;
+    font-family: 'Courier New', monospace;
+    min-height: 100vh;
+    padding-bottom: 40px;
+  }
+  .header {
+    background: linear-gradient(135deg, #1a0a00, #0a0a0a);
+    border-bottom: 2px solid #FF6B35;
+    padding: 50px 16px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .label { font-size: 10px; letter-spacing: 4px; color: #FF6B35; margin-bottom: 4px; }
+  .title { font-size: 22px; font-weight: bold; letter-spacing: 2px; }
+  .next-banner {
+    margin-top: 12px;
+    background: #1a1a1a;
+    border: 1px solid #FF6B35;
+    border-radius: 6px;
+    padding: 10px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .next-label { font-size: 9px; color: #FF6B35; letter-spacing: 2px; }
+  .next-text { font-size: 12px; margin-top: 2px; }
+  .next-time { font-size: 11px; color: #888; margin-top: 2px; }
+  .countdown { font-size: 20px; font-weight: bold; color: #FF6B35; min-width: 70px; text-align: right; }
+  .content { padding: 16px; }
+  .input-box {
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  input[type="time"] {
+    background: #1a1a1a;
+    border: 1px solid #FF6B35;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 28px;
+    padding: 12px 16px;
+    width: 100%;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 2px;
+  }
+  .btn {
+    margin-top: 12px;
+    width: 100%;
+    background: #FF6B35;
+    border: none;
+    border-radius: 6px;
+    color: #000;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    padding: 14px;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+  }
+  .reset-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .reset-btn {
+    background: transparent;
+    border: 1px solid #333;
+    border-radius: 4px;
+    color: #888;
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+  }
+  .phase-card {
+    border-radius: 10px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+  .phase-header {
+    padding: 12px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .phase-left { display: flex; align-items: center; gap: 10px; }
+  .phase-num { font-size: 9px; letter-spacing: 3px; }
+  .phase-name { font-size: 14px; font-weight: bold; letter-spacing: 1px; }
+  .temp-block { text-align: right; }
+  .temp-c { font-size: 18px; font-weight: bold; }
+  .temp-f { font-size: 12px; margin-top: 1px; opacity: 0.75; }
+  .phase-time { font-size: 10px; color: #666; margin-top: 2px; }
+  .progress-bar { height: 3px; background: #1a1a1a; }
+  .progress-fill { height: 100%; transition: width 1s linear; }
+  .checkpoints { padding: 10px 14px; }
+  .cp {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 1px solid #1a1a1a;
+  }
+  .cp:last-child { border-bottom: none; }
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-top: 3px;
+    flex-shrink: 0;
+  }
+  .cp-text { font-size: 11px; line-height: 1.4; }
+  .cp-time { font-size: 10px; color: #555; margin-top: 2px; }
+  .alarm-list {
+    background: #0d0d0d;
+    border: 1px solid #1a1a1a;
+    border-radius: 10px;
+    padding: 16px;
+    margin-top: 8px;
+  }
+  .alarm-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #111;
+  }
+  .alarm-row:last-child { border-bottom: none; }
+  .alarm-text { font-size: 11px; color: #aaa; flex: 1; padding-right: 8px; }
+  .alarm-time { font-size: 11px; color: #FF6B35; white-space: nowrap; }
+  .kiln-tip {
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    font-size: 11px;
+    color: #888;
+    line-height: 1.8;
+  }
+  .kiln-tip span { color: #FF6B35; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="label">RANSOM & RANDOLPH PLASTICAST®</div>
+  <div class="title">BURNOUT CONTROLLER</div>
+  <div id="nextBanner" style="display:none" class="next-banner">
+    <div style="flex:1;padding-right:10px">
+      <div class="next-label">NEXT ACTION</div>
+      <div class="next-text" id="nextText"></div>
+      <div class="next-time" id="nextTime"></div>
+    </div>
+    <div class="countdown" id="nextCountdown"></div>
+  </div>
+</div>
+
+<div class="content">
+  <div id="inputSection" class="input-box">
+    <div class="label" style="margin-bottom:12px">ENTER START TIME</div>
+    <input type="time" id="startInput" />
+    <button class="btn" onclick="generateSchedule()">GENERATE SCHEDULE</button>
+  </div>
+
+  <div id="scheduleSection" style="display:none">
+    <div class="reset-row">
+      <div style="font-size:11px;color:#888;letter-spacing:2px" id="startedLabel"></div>
+      <button class="reset-btn" onclick="resetSchedule()">RESET</button>
+    </div>
+
+    <div class="kiln-tip">
+      🔧 <span>KILN:</span> Press <span>U</span> → <span>▲▼</span> to set °C → press <span>P</span> to confirm<br>
+      <span>≡ blinking</span> = holding at temp ✅
+    </div>
+
+    <div id="phases"></div>
+
+    <div class="alarm-list">
+      <div class="label" style="margin-bottom:12px">ALL CHECKPOINTS</div>
+      <div id="alarmList"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const PHASES = [
+  {
+    id:1, name:"WATER REMOVAL", emoji:"💧",
+    tempF:300, tempC:149,
+    color:"#FF6B35", duration:180,
+    checkpoints:[
+      {offset:45,  label:"Check temp — approaching 149°C / 300°F"},
+      {offset:75,  label:"Confirm holding at 149°C / 300°F"},
+      {offset:135, label:"Still holding — looking good"},
+      {offset:180, label:"⚠️ Phase 1 done — set kiln to 371°C / 700°F"},
+    ]
+  },
+  {
+    id:2, name:"THERMAL TRANSITION", emoji:"🔥",
+    tempF:700, tempC:371,
+    color:"#FF9500", duration:240,
+    checkpoints:[
+      {offset:45,  label:"Should be ~260°C / 500°F"},
+      {offset:120, label:"Should hit 371°C / 700°F — confirm & hold"},
+      {offset:180, label:"Check — ≡ blinking = holding at 371°C"},
+      {offset:240, label:"⚠️ Phase 2 done — set kiln to 732°C / 1350°F"},
+    ]
+  },
+  {
+    id:3, name:"PATTERN BURNOUT", emoji:"🌡️",
+    tempF:1350, tempC:732,
+    color:"#FF3B30", duration:240,
+    checkpoints:[
+      {offset:45,  label:"Should be ~482°C / 900°F"},
+      {offset:90,  label:"Should be ~593°C / 1100°F"},
+      {offset:120, label:"Should hit 732°C / 1350°F — confirm & hold"},
+      {offset:135, label:"Crack door slightly — vent carbon gases"},
+      {offset:165, label:"Peek inside — walls should be white/gray"},
+      {offset:240, label:"⚠️ Phase 3 done — set kiln to 510°C / 950°F"},
+    ]
+  },
+  {
+    id:4, name:"DROP & STABILIZE", emoji:"❄️",
+    tempF:950, tempC:510,
+    color:"#30B0C7", duration:120,
+    checkpoints:[
+      {offset:30,  label:"Check temp dropping correctly"},
+      {offset:60,  label:"Should be near 538°C / 1000°F"},
+      {offset:90,  label:"Confirm stable at 510°C / 950°F"},
+      {offset:120, label:"⚠️ READY TO CAST — load alloy now"},
+    ]
+  },
+  {
+    id:5, name:"CAST", emoji:"⚡",
+    tempF:null, tempC:null,
+    color:"#FFD60A", duration:30,
+    checkpoints:[
+      {offset:0,  label:"Load ECCO alloy into Tooltos crucible"},
+      {offset:15, label:"Heat with light blue flame in circles"},
+      {offset:25, label:"Watch for slump in ingots"},
+      {offset:30, label:"🔥 LAUNCH at medium strength — CAST!"},
+    ]
+  }
+];
+
+let schedule = null;
+let ticker = null;
+
+function addMin(d, m) { return new Date(d.getTime() + m*60000); }
+function fmt(d) { return d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true}); }
+function countdown(ms) {
+  if (ms<=0) return "NOW";
+  const s=Math.floor(ms/1000), h=Math.floor(s/3600), m=Math.floor((s%3600)/60), sec=s%60;
+  if (h>0) return `${h}h ${m}m`;
+  if (m>0) return `${m}m ${sec}s`;
+  return `${sec}s`;
+}
+
+function generateSchedule() {
+  const val = document.getElementById('startInput').value;
+  if (!val) return;
+  const [h,m] = val.split(':').map(Number);
+  const start = new Date();
+  start.setHours(h,m,0,0);
+  let cursor = new Date(start);
+  schedule = {
+    start,
+    phases: PHASES.map(p => {
+      const ps = new Date(cursor);
+      const cps = p.checkpoints.map(cp => ({...cp, time: addMin(ps, cp.offset)}));
+      cursor = addMin(ps, p.duration);
+      return {...p, startTime:ps, endTime:new Date(cursor), checkpoints:cps};
+    })
+  };
+  document.getElementById('inputSection').style.display='none';
+  document.getElementById('scheduleSection').style.display='block';
+  document.getElementById('startedLabel').textContent='STARTED '+fmt(start);
+  renderAlarms();
+  if (ticker) clearInterval(ticker);
+  tick();
+  ticker = setInterval(tick, 1000);
+}
+
+function renderAlarms() {
+  const all = schedule.phases.flatMap(p=>p.checkpoints);
+  document.getElementById('alarmList').innerHTML = all.map(cp=>`
+    <div class="alarm-row">
+      <div class="alarm-text">${cp.label}</div>
+      <div class="alarm-time">${fmt(cp.time)}</div>
+    </div>`).join('');
+}
+
+function tick() {
+  const now = new Date();
+  const allCps = schedule.phases.flatMap(p=>p.checkpoints).filter(cp=>cp.time>now).sort((a,b)=>a.time-b.time);
+  if (allCps.length>0) {
+    const next = allCps[0];
+    document.getElementById('nextBanner').style.display='flex';
+    document.getElementById('nextText').textContent=next.label;
+    document.getElementById('nextTime').textContent=fmt(next.time);
+    const ms = next.time-now;
+    document.getElementById('nextCountdown').textContent=countdown(ms);
+    document.getElementById('nextCountdown').style.color=ms<600000?'#FF3B30':'#FF6B35';
+  } else {
+    document.getElementById('nextBanner').style.display='none';
+  }
+
+  let ap=0;
+  for (let i=schedule.phases.length-1;i>=0;i--) {
+    if (now>=schedule.phases[i].startTime){ap=i;break;}
+  }
+
+  document.getElementById('phases').innerHTML = schedule.phases.map((phase,pi)=>{
+    const isActive=pi===ap&&now>=phase.startTime&&now<phase.endTime;
+    const isDone=now>=phase.endTime;
+    const isPending=now<phase.startTime;
+    const isNext=pi===ap+1;
+    const progress=isActive?Math.min(100,((now-phase.startTime)/(phase.endTime-phase.startTime))*100):isDone?100:0;
+    const showCps=isActive||isDone||isNext;
+
+    const tempDisplay = phase.tempF
+      ? `<div class="temp-c" style="color:${phase.color}">${phase.tempC}°C</div>
+         <div class="temp-f" style="color:${phase.color}">${phase.tempF}°F</div>`
+      : `<div class="temp-c" style="color:${phase.color}">GO TIME</div>`;
+
+    const cpsHtml = showCps ? `<div class="checkpoints">${phase.checkpoints.map((cp,ci)=>{
+      const cpDone=now>=cp.time;
+      const cpNext=!cpDone&&(ci===0||now>=phase.checkpoints[ci-1]?.time);
+      return `<div class="cp" style="opacity:${cpDone?'0.5':'1'}">
+        <div class="dot" style="background:${cpDone?'#2a2a2a':cpNext?phase.color:'#2a2a2a'};border:2px solid ${cpNext?phase.color:'#333'};box-shadow:${cpNext?`0 0 8px ${phase.color}`:'none'}"></div>
+        <div>
+          <div class="cp-text" style="color:${cpDone?'#444':cpNext?'#fff':'#888'}">${cp.label}</div>
+          <div class="cp-time">${fmt(cp.time)} ${!cpDone?`<span style="color:${cpNext?phase.color:'#444'};margin-left:8px">${countdown(cp.time-now)}</span>`:'<span style="color:#2a5c2a;margin-left:8px">✓ done</span>'}</div>
+        </div>
+      </div>`;
+    }).join('')}</div>` : '';
+
+    const progressHtml=(isActive||isDone)?`<div class="progress-bar"><div class="progress-fill" style="width:${progress}%;background:${phase.color}"></div></div>`:'';
+
+    return `<div class="phase-card" style="background:${isActive?'#111':'#0d0d0d'};border:1px solid ${isActive?phase.color:isDone?'#2a2a2a':'#1a1a1a'};opacity:${isPending?'0.6':'1'}">
+      <div class="phase-header" style="border-bottom:${isActive?`1px solid ${phase.color}33`:'none'}">
+        <div class="phase-left">
+          <span style="font-size:18px">${phase.emoji}</span>
+          <div>
+            <div class="phase-num" style="color:${phase.color}">PHASE ${phase.id}</div>
+            <div class="phase-name">${phase.name}</div>
+          </div>
+        </div>
+        <div class="temp-block">
+          ${tempDisplay}
+          <div class="phase-time">${fmt(phase.startTime)}</div>
+        </div>
+      </div>
+      ${progressHtml}
+      ${cpsHtml}
+    </div>`;
+  }).join('');
+}
+
+function resetSchedule() {
+  schedule=null;
+  if (ticker) clearInterval(ticker);
+  document.getElementById('inputSection').style.display='block';
+  document.getElementById('scheduleSection').style.display='none';
+  document.getElementById('nextBanner').style.display='none';
+}
+</script>
+</body>
+</html>
