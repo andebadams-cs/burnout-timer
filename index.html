@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -97,48 +98,51 @@
   <div id="scheduleSection" style="display:none">
     <div class="saved-badge">✓ SESSION SAVED — AUTO RESTORES ON RELOAD</div>
 
-    <!-- SET ALARMS BANNER -->
-    <div class="alarm-banner" id="alarmBanner">
-      <div class="alarm-banner-text">
-        🔔 <strong style="color:#fff">Set phone alarms?</strong><br>
-        Tap to send all 24 checkpoints to your Reminders app automatically.
-      </div>
-      <button class="alarm-banner-btn" onclick="sendToShortcut()">SET ALARMS →</button>
-    </div>
+```
+<!-- SET ALARMS BANNER -->
+<div class="alarm-banner" id="alarmBanner">
+  <div class="alarm-banner-text">
+    🔔 <strong style="color:#fff">Set phone alarms?</strong><br>
+    Tap to send all 24 checkpoints to your Reminders app automatically.
+  </div>
+  <button class="alarm-banner-btn" onclick="sendToShortcut()">SET ALARMS →</button>
+</div>
 
-    <div class="reset-row">
-      <div style="font-size:11px;color:#888;letter-spacing:2px" id="startedLabel"></div>
-      <button class="reset-btn" onclick="resetSchedule()">RESET</button>
-    </div>
-    <div class="kiln-tip">
-      🔧 <span>KILN:</span> Press <span>U</span> → <span>▲▼</span> to set °C → <span>P</span> to confirm &nbsp;|&nbsp; <span>≡ blinking</span> = holding ✅
-    </div>
-    <div class="tab-row">
-      <button class="tab active" id="tab-burnout" onclick="showTab('burnout')">BURNOUT</button>
-      <button class="tab" id="tab-cast" onclick="showTab('cast')">CAST</button>
-      <button class="tab" id="tab-alarms" onclick="showTab('alarms')">ALARMS</button>
-    </div>
+<div class="reset-row">
+  <div style="font-size:11px;color:#888;letter-spacing:2px" id="startedLabel"></div>
+  <button class="reset-btn" onclick="resetSchedule()">RESET</button>
+</div>
+<div class="kiln-tip">
+  🔧 <span>KILN:</span> Press <span>U</span> → <span>▲▼</span> to set °C → <span>P</span> to confirm &nbsp;|&nbsp; <span>≡ blinking</span> = holding ✅
+</div>
+<div class="tab-row">
+  <button class="tab active" id="tab-burnout" onclick="showTab('burnout')">BURNOUT</button>
+  <button class="tab" id="tab-cast" onclick="showTab('cast')">CAST</button>
+  <button class="tab" id="tab-alarms" onclick="showTab('alarms')">ALARMS</button>
+</div>
 
-    <div id="view-burnout"><div id="phases"></div></div>
+<div id="view-burnout"><div id="phases"></div></div>
 
-    <div id="view-cast" style="display:none">
-      <div class="cast-timer-header">
-        <div class="cast-timer-big" id="castTimerDisplay">00:00</div>
-        <div class="cast-timer-label" id="castTimerLabel">TAP START TO BEGIN CAST SEQUENCE</div>
-        <div class="cast-timer-btns">
-          <button class="btn btn-green" id="castStartBtn" onclick="startCastTimer()" style="margin-top:0">▶ START CAST</button>
-          <button class="btn btn-red" id="castResetBtn" onclick="resetCastTimer()" style="margin-top:0;display:none">↺ RESET</button>
-        </div>
-      </div>
-      <div id="castSteps"></div>
+<div id="view-cast" style="display:none">
+  <div class="cast-timer-header">
+    <div class="cast-timer-big" id="castTimerDisplay">00:00</div>
+    <div class="cast-timer-label" id="castTimerLabel">TAP START TO BEGIN CAST SEQUENCE</div>
+    <div class="cast-timer-btns">
+      <button class="btn btn-green" id="castStartBtn" onclick="startCastTimer()" style="margin-top:0">▶ START CAST</button>
+      <button class="btn btn-red" id="castResetBtn" onclick="resetCastTimer()" style="margin-top:0;display:none">↺ RESET</button>
     </div>
+  </div>
+  <div id="castSteps"></div>
+</div>
 
-    <div id="view-alarms" style="display:none">
-      <div class="section-card">
-        <div class="section-title">ALL CHECKPOINTS</div>
-        <div id="alarmList"></div>
-      </div>
-    </div>
+<div id="view-alarms" style="display:none">
+  <div class="section-card">
+    <div class="section-title">ALL CHECKPOINTS</div>
+    <div id="alarmList"></div>
+  </div>
+</div>
+```
+
   </div>
 </div>
 
@@ -240,7 +244,7 @@ window.addEventListener('load',()=>{
   const saved=localStorage.getItem('burnout_start');
   if(saved){
     const st=new Date(parseInt(saved));
-    if(Date.now()-st<24*60*60*1000){
+    if(Date.now()-st<26*60*60*1000){
       savedStartTime=st;
       buildSchedule(st);
       document.getElementById('inputSection').style.display='none';
@@ -258,6 +262,8 @@ function generateSchedule(){
   if(!val)return;
   const[h,m]=val.split(':').map(Number);
   const start=new Date();start.setHours(h,m,0,0);
+  // If start time is more than 1 hour in the future, it means we crossed midnight — roll back to yesterday
+  if(start.getTime()>Date.now()+60*60*1000){start.setDate(start.getDate()-1);}
   savedStartTime=start;
   localStorage.setItem('burnout_start',start.getTime().toString());
   buildSchedule(start);
@@ -415,5 +421,6 @@ function resetSchedule(){
   document.getElementById('nextBanner').style.display='none';
 }
 </script>
+
 </body>
 </html>
