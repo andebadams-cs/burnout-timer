@@ -73,6 +73,20 @@
     cursor: pointer;
     font-family: 'Courier New', monospace;
   }
+  .btn-outline {
+    margin-top: 8px;
+    width: 100%;
+    background: transparent;
+    border: 1px solid #FF6B35;
+    border-radius: 6px;
+    color: #FF6B35;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    padding: 12px;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+  }
   .reset-row {
     display: flex;
     justify-content: space-between;
@@ -140,6 +154,7 @@
     justify-content: space-between;
     padding: 6px 0;
     border-bottom: 1px solid #111;
+    align-items: center;
   }
   .alarm-row:last-child { border-bottom: none; }
   .alarm-text { font-size: 11px; color: #aaa; flex: 1; padding-right: 8px; }
@@ -155,6 +170,27 @@
     line-height: 1.8;
   }
   .kiln-tip span { color: #FF6B35; font-weight: bold; }
+  .notif-banner {
+    background: #1a1a00;
+    border: 1px solid #FF9500;
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    font-size: 11px;
+    color: #FF9500;
+    line-height: 1.6;
+  }
+  .saved-badge {
+    background: #0a1a0a;
+    border: 1px solid #2a5c2a;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 10px;
+    color: #4a9c4a;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    text-align: center;
+  }
 </style>
 </head>
 <body>
@@ -177,9 +213,12 @@
     <div class="label" style="margin-bottom:12px">ENTER START TIME</div>
     <input type="time" id="startInput" />
     <button class="btn" onclick="generateSchedule()">GENERATE SCHEDULE</button>
+    <button class="btn-outline" onclick="requestNotifications()">🔔 ENABLE PHONE ALERTS</button>
   </div>
 
   <div id="scheduleSection" style="display:none">
+    <div class="saved-badge">✓ SESSION SAVED — RELOADS AUTOMATICALLY</div>
+
     <div class="reset-row">
       <div style="font-size:11px;color:#888;letter-spacing:2px" id="startedLabel"></div>
       <button class="reset-btn" onclick="resetSchedule()">RESET</button>
@@ -262,6 +301,61 @@ const PHASES = [
 
 let schedule = null;
 let ticker = null;
+let notificationsEnabled = false;
+let notifiedCheckpoints = new Set();
+
+// Load saved session on page load
+window.addEventListener('load', () => {
+  const saved = localStorage.getItem('burnout_start');
+  if (saved) {
+    const startTime = new Date(parseInt(saved));
+    // Only restore if within 24 hours
+    if (Date.now() - startTime < 24 * 60 * 60 * 1000) {
+      buildSchedule(startTime);
+      document.getElementById('inputSection').style.display = 'none';
+      document.getElementById('scheduleSection').style.display = 'block';
+      document.getElementById('startedLabel').textContent = 'STARTED ' + fmt(startTime);
+      renderAlarms();
+      if (ticker) clearInterval(ticker);
+      tick();
+      ticker = setInterval(tick, 1000);
+    } else {
+      localStorage.removeItem('burnout_start');
+    }
+  }
+});
+
+async function requestNotifications() {
+  if ('Notification' in window) {
+    const perm = await Notification.requestPermission();
+    if (perm === 'granted') {
+      notificationsEnabled = true;
+      alert('✅ Phone alerts enabled! You\'ll get notified at each checkpoint.');
+    } else {
+      alert('Notifications blocked. You can enable them in Safari Settings → Notifications.');
+    }
+  } else {
+    alert('Add this page to your Home Screen first, then enable notifications.');
+  }
+}
+
+function scheduleNotifications() {
+  if (!notificationsEnabled || !schedule) return;
+  const now = Date.now();
+  schedule.phases.flatMap(p => p.checkpoints).forEach(cp => {
+    const ms = cp.time - now;
+    if (ms > 0) {
+      setTimeout(() => {
+        if (Notification.permission === 'granted') {
+          new Notification('🔥 Burnout Timer', {
+            body: cp.label,
+            icon: '/favicon.ico'
+          });
+        }
+      }, ms);
+    }
+  });
+}
 
 function addMin(d, m) { return new Date(d.getTime() + m*60000); }
 function fmt(d) { return d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true}); }
@@ -273,12 +367,7 @@ function countdown(ms) {
   return `${sec}s`;
 }
 
-function generateSchedule() {
-  const val = document.getElementById('startInput').value;
-  if (!val) return;
-  const [h,m] = val.split(':').map(Number);
-  const start = new Date();
-  start.setHours(h,m,0,0);
+function buildSchedule(start) {
   let cursor = new Date(start);
   schedule = {
     start,
@@ -289,10 +378,25 @@ function generateSchedule() {
       return {...p, startTime:ps, endTime:new Date(cursor), checkpoints:cps};
     })
   };
+}
+
+function generateSchedule() {
+  const val = document.getElementById('startInput').value;
+  if (!val) return;
+  const [h,m] = val.split(':').map(Number);
+  const start = new Date();
+  start.setHours(h,m,0,0);
+
+  // Save to localStorage
+  localStorage.setItem('burnout_start', start.getTime().toString());
+
+  buildSchedule(start);
+
   document.getElementById('inputSection').style.display='none';
   document.getElementById('scheduleSection').style.display='block';
   document.getElementById('startedLabel').textContent='STARTED '+fmt(start);
   renderAlarms();
+  scheduleNotifications();
   if (ticker) clearInterval(ticker);
   tick();
   ticker = setInterval(tick, 1000);
@@ -375,6 +479,8 @@ function tick() {
 }
 
 function resetSchedule() {
+  if (!confirm('Reset the burnout schedule?')) return;
+  localStorage.removeItem('burnout_start');
   schedule=null;
   if (ticker) clearInterval(ticker);
   document.getElementById('inputSection').style.display='block';
