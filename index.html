@@ -8,201 +8,80 @@
 <meta name="apple-mobile-web-app-title" content="Burnout Timer">
 <title>Burnout Timer</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: #0a0a0a;
-    color: #fff;
-    font-family: 'Courier New', monospace;
-    min-height: 100vh;
-    padding-bottom: 40px;
-  }
-  .header {
-    background: linear-gradient(135deg, #1a0a00, #0a0a0a);
-    border-bottom: 2px solid #FF6B35;
-    padding: 50px 16px 16px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .label { font-size: 10px; letter-spacing: 4px; color: #FF6B35; margin-bottom: 4px; }
-  .title { font-size: 22px; font-weight: bold; letter-spacing: 2px; }
-  .next-banner {
-    margin-top: 12px;
-    background: #1a1a1a;
-    border: 1px solid #FF6B35;
-    border-radius: 6px;
-    padding: 10px 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .next-label { font-size: 9px; color: #FF6B35; letter-spacing: 2px; }
-  .next-text { font-size: 12px; margin-top: 2px; }
-  .next-time { font-size: 11px; color: #888; margin-top: 2px; }
-  .countdown { font-size: 20px; font-weight: bold; color: #FF6B35; min-width: 70px; text-align: right; }
-  .content { padding: 16px; }
-  .input-box {
-    background: #111;
-    border: 1px solid #333;
-    border-radius: 10px;
-    padding: 20px;
-    margin-bottom: 16px;
-  }
-  input[type="time"] {
-    background: #1a1a1a;
-    border: 1px solid #FF6B35;
-    border-radius: 6px;
-    color: #fff;
-    font-size: 28px;
-    padding: 12px 16px;
-    width: 100%;
-    font-family: 'Courier New', monospace;
-    letter-spacing: 2px;
-  }
-  .btn {
-    margin-top: 12px;
-    width: 100%;
-    background: #FF6B35;
-    border: none;
-    border-radius: 6px;
-    color: #000;
-    font-size: 14px;
-    font-weight: bold;
-    letter-spacing: 3px;
-    padding: 14px;
-    cursor: pointer;
-    font-family: 'Courier New', monospace;
-  }
-  .btn-outline {
-    margin-top: 8px;
-    width: 100%;
-    background: transparent;
-    border: 1px solid #FF6B35;
-    border-radius: 6px;
-    color: #FF6B35;
-    font-size: 12px;
-    font-weight: bold;
-    letter-spacing: 2px;
-    padding: 12px;
-    cursor: pointer;
-    font-family: 'Courier New', monospace;
-  }
-  .reset-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-  }
-  .reset-btn {
-    background: transparent;
-    border: 1px solid #333;
-    border-radius: 4px;
-    color: #888;
-    font-size: 10px;
-    letter-spacing: 2px;
-    padding: 6px 12px;
-    cursor: pointer;
-    font-family: 'Courier New', monospace;
-  }
-  .phase-card {
-    border-radius: 10px;
-    margin-bottom: 12px;
-    overflow: hidden;
-    transition: all 0.3s;
-  }
-  .phase-header {
-    padding: 12px 14px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .phase-left { display: flex; align-items: center; gap: 10px; }
-  .phase-num { font-size: 9px; letter-spacing: 3px; }
-  .phase-name { font-size: 14px; font-weight: bold; letter-spacing: 1px; }
-  .temp-block { text-align: right; }
-  .temp-c { font-size: 18px; font-weight: bold; }
-  .temp-f { font-size: 12px; margin-top: 1px; opacity: 0.75; }
-  .phase-time { font-size: 10px; color: #666; margin-top: 2px; }
-  .progress-bar { height: 3px; background: #1a1a1a; }
-  .progress-fill { height: 100%; transition: width 1s linear; }
-  .checkpoints { padding: 10px 14px; }
-  .cp {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 6px 0;
-    border-bottom: 1px solid #1a1a1a;
-  }
-  .cp:last-child { border-bottom: none; }
-  .dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    margin-top: 3px;
-    flex-shrink: 0;
-  }
-  .cp-text { font-size: 11px; line-height: 1.4; }
-  .cp-time { font-size: 10px; color: #555; margin-top: 2px; }
-  .alarm-list {
-    background: #0d0d0d;
-    border: 1px solid #1a1a1a;
-    border-radius: 10px;
-    padding: 16px;
-    margin-top: 8px;
-  }
-  .alarm-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 6px 0;
-    border-bottom: 1px solid #111;
-    align-items: center;
-  }
-  .alarm-row:last-child { border-bottom: none; }
-  .alarm-text { font-size: 11px; color: #aaa; flex: 1; padding-right: 8px; }
-  .alarm-time { font-size: 11px; color: #FF6B35; white-space: nowrap; }
-  .kiln-tip {
-    background: #111;
-    border: 1px solid #333;
-    border-radius: 8px;
-    padding: 12px 14px;
-    margin-bottom: 12px;
-    font-size: 11px;
-    color: #888;
-    line-height: 1.8;
-  }
-  .kiln-tip span { color: #FF6B35; font-weight: bold; }
-  .notif-banner {
-    background: #1a1a00;
-    border: 1px solid #FF9500;
-    border-radius: 8px;
-    padding: 12px 14px;
-    margin-bottom: 12px;
-    font-size: 11px;
-    color: #FF9500;
-    line-height: 1.6;
-  }
-  .saved-badge {
-    background: #0a1a0a;
-    border: 1px solid #2a5c2a;
-    border-radius: 6px;
-    padding: 6px 12px;
-    font-size: 10px;
-    color: #4a9c4a;
-    letter-spacing: 2px;
-    margin-bottom: 12px;
-    text-align: center;
-  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:#0a0a0a;color:#fff;font-family:'Courier New',monospace;min-height:100vh;padding-bottom:60px;}
+  .header{background:linear-gradient(135deg,#1a0a00,#0a0a0a);border-bottom:2px solid #FF6B35;padding:50px 16px 16px;position:sticky;top:0;z-index:100;}
+  .lbl{font-size:10px;letter-spacing:4px;color:#FF6B35;margin-bottom:4px;}
+  .title{font-size:22px;font-weight:bold;letter-spacing:2px;}
+  .next-banner{margin-top:12px;background:#1a1a1a;border:1px solid #FF6B35;border-radius:6px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;}
+  .countdown{font-size:20px;font-weight:bold;color:#FF6B35;min-width:70px;text-align:right;}
+  .content{padding:16px;}
+  .input-box{background:#111;border:1px solid #333;border-radius:10px;padding:20px;margin-bottom:16px;}
+  input[type="time"]{background:#1a1a1a;border:1px solid #FF6B35;border-radius:6px;color:#fff;font-size:28px;padding:12px 16px;width:100%;font-family:'Courier New',monospace;letter-spacing:2px;}
+  .btn{margin-top:12px;width:100%;background:#FF6B35;border:none;border-radius:6px;color:#000;font-size:14px;font-weight:bold;letter-spacing:3px;padding:14px;cursor:pointer;font-family:'Courier New',monospace;}
+  .btn-alarm{background:#1a3a1a;border:1px solid #30B050;color:#30B050;font-size:13px;letter-spacing:2px;}
+  .btn-green{background:#2a7c2a;color:#fff;}
+  .btn-red{background:#7c2a2a;color:#fff;}
+  .alarm-banner{background:#0a1a0a;border:1px solid #2a7c2a;border-radius:8px;padding:12px 14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;}
+  .alarm-banner-text{font-size:11px;color:#4a9c4a;line-height:1.5;}
+  .alarm-banner-btn{background:#2a7c2a;border:none;border-radius:6px;color:#fff;font-size:11px;font-weight:bold;letter-spacing:1px;padding:8px 12px;cursor:pointer;font-family:'Courier New',monospace;white-space:nowrap;margin-left:10px;}
+  .reset-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+  .reset-btn{background:transparent;border:1px solid #333;border-radius:4px;color:#888;font-size:10px;letter-spacing:2px;padding:6px 12px;cursor:pointer;font-family:'Courier New',monospace;}
+  .phase-card{border-radius:10px;margin-bottom:12px;overflow:hidden;}
+  .phase-header{padding:12px 14px;display:flex;justify-content:space-between;align-items:center;}
+  .phase-left{display:flex;align-items:center;gap:10px;}
+  .temp-block{text-align:right;}
+  .temp-c{font-size:18px;font-weight:bold;}
+  .temp-f{font-size:11px;opacity:.75;margin-top:1px;}
+  .phase-time{font-size:10px;color:#666;margin-top:2px;}
+  .progress-bar{height:3px;background:#1a1a1a;}
+  .progress-fill{height:100%;transition:width 1s linear;}
+  .checkpoints{padding:10px 14px;}
+  .cp{display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid #1a1a1a;}
+  .cp:last-child{border-bottom:none;}
+  .dot{width:8px;height:8px;border-radius:50%;margin-top:3px;flex-shrink:0;}
+  .cp-label{font-size:11px;line-height:1.4;}
+  .cp-sub{font-size:10px;color:#555;margin-top:2px;}
+  .ramp-badge{display:inline-block;background:#1a1200;border:1px solid #664400;border-radius:3px;font-size:9px;color:#FF9500;padding:1px 5px;letter-spacing:1px;margin-left:6px;vertical-align:middle;}
+  .section-card{background:#0d0d0d;border:1px solid #1a1a1a;border-radius:10px;padding:16px;margin-top:8px;margin-bottom:12px;}
+  .section-title{font-size:9px;letter-spacing:3px;color:#888;margin-bottom:12px;}
+  .saved-badge{background:#0a1a0a;border:1px solid #2a5c2a;border-radius:6px;padding:6px 12px;font-size:10px;color:#4a9c4a;letter-spacing:2px;margin-bottom:12px;text-align:center;}
+  .kiln-tip{background:#111;border:1px solid #333;border-radius:8px;padding:12px 14px;margin-bottom:12px;font-size:11px;color:#888;line-height:1.8;}
+  .kiln-tip span{color:#FF6B35;font-weight:bold;}
+  .alarm-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #111;}
+  .alarm-row:last-child{border-bottom:none;}
+  .alarm-text{font-size:11px;color:#aaa;flex:1;padding-right:8px;}
+  .alarm-time{font-size:11px;color:#FF6B35;white-space:nowrap;}
+  .tab-row{display:flex;gap:8px;margin-bottom:16px;}
+  .tab{flex:1;padding:10px;border-radius:6px;border:1px solid #333;background:transparent;color:#888;font-size:11px;letter-spacing:2px;cursor:pointer;font-family:'Courier New',monospace;text-align:center;}
+  .tab.active{background:#FF6B35;border-color:#FF6B35;color:#000;font-weight:bold;}
+  .cast-timer-header{background:#111;border:1px solid #FF6B35;border-radius:10px;padding:16px;margin-bottom:16px;text-align:center;}
+  .cast-timer-big{font-size:48px;font-weight:bold;letter-spacing:4px;color:#FF6B35;font-variant-numeric:tabular-nums;}
+  .cast-timer-label{font-size:10px;letter-spacing:3px;color:#888;margin-top:4px;}
+  .cast-timer-btns{display:flex;gap:8px;margin-top:12px;}
+  .cast-step-card{background:#0d0d0d;border-radius:10px;margin-bottom:8px;overflow:hidden;border:1px solid #1a1a1a;transition:all 0.3s;}
+  .cast-step-card.active{background:#111;border-color:#FF6B35;}
+  .cast-step-card.done{opacity:0.4;}
+  .cast-step-inner{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;}
+  .cast-step-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;flex-shrink:0;}
+  .cast-step-body{flex:1;}
+  .cast-step-title{font-size:12px;font-weight:bold;color:#fff;line-height:1.4;}
+  .cast-step-desc{font-size:11px;color:#888;margin-top:3px;line-height:1.5;}
+  .cast-step-dur{font-size:10px;color:#555;margin-top:4px;}
+  .cast-step-timer{font-size:16px;font-weight:bold;color:#FF6B35;margin-top:4px;}
+  .next-step-btn{width:100%;margin-top:12px;background:#FF6B35;border:none;border-radius:6px;color:#000;font-size:13px;font-weight:bold;letter-spacing:2px;padding:12px;cursor:pointer;font-family:'Courier New',monospace;}
 </style>
 </head>
 <body>
 
 <div class="header">
-  <div class="label">RANSOM & RANDOLPH PLASTICAST®</div>
-  <div class="title">BURNOUT CONTROLLER</div>
+  <div class="lbl">PLASTICAST® BURNOUT CONTROLLER</div>
+  <div class="title">TOOLTOS VACUUM CAST</div>
   <div id="nextBanner" style="display:none" class="next-banner">
     <div style="flex:1;padding-right:10px">
-      <div class="next-label">NEXT ACTION</div>
-      <div class="next-text" id="nextText"></div>
-      <div class="next-time" id="nextTime"></div>
+      <div style="font-size:9px;color:#FF6B35;letter-spacing:2px">NEXT ACTION</div>
+      <div id="nextText" style="font-size:12px;margin-top:2px"></div>
+      <div id="nextTime" style="font-size:11px;color:#888;margin-top:2px"></div>
     </div>
     <div class="countdown" id="nextCountdown"></div>
   </div>
@@ -210,279 +89,327 @@
 
 <div class="content">
   <div id="inputSection" class="input-box">
-    <div class="label" style="margin-bottom:12px">ENTER START TIME</div>
-    <input type="time" id="startInput" />
+    <div class="lbl" style="margin-bottom:12px">ENTER BURNOUT START TIME</div>
+    <input type="time" id="startInput"/>
     <button class="btn" onclick="generateSchedule()">GENERATE SCHEDULE</button>
-    <button class="btn-outline" onclick="requestNotifications()">🔔 ENABLE PHONE ALERTS</button>
   </div>
 
   <div id="scheduleSection" style="display:none">
-    <div class="saved-badge">✓ SESSION SAVED — RELOADS AUTOMATICALLY</div>
+    <div class="saved-badge">✓ SESSION SAVED — AUTO RESTORES ON RELOAD</div>
+
+    <!-- SET ALARMS BANNER -->
+    <div class="alarm-banner" id="alarmBanner">
+      <div class="alarm-banner-text">
+        🔔 <strong style="color:#fff">Set phone alarms?</strong><br>
+        Tap to send all 24 checkpoints to your Reminders app automatically.
+      </div>
+      <button class="alarm-banner-btn" onclick="sendToShortcut()">SET ALARMS →</button>
+    </div>
 
     <div class="reset-row">
       <div style="font-size:11px;color:#888;letter-spacing:2px" id="startedLabel"></div>
       <button class="reset-btn" onclick="resetSchedule()">RESET</button>
     </div>
-
     <div class="kiln-tip">
-      🔧 <span>KILN:</span> Press <span>U</span> → <span>▲▼</span> to set °C → press <span>P</span> to confirm<br>
-      <span>≡ blinking</span> = holding at temp ✅
+      🔧 <span>KILN:</span> Press <span>U</span> → <span>▲▼</span> to set °C → <span>P</span> to confirm &nbsp;|&nbsp; <span>≡ blinking</span> = holding ✅
+    </div>
+    <div class="tab-row">
+      <button class="tab active" id="tab-burnout" onclick="showTab('burnout')">BURNOUT</button>
+      <button class="tab" id="tab-cast" onclick="showTab('cast')">CAST</button>
+      <button class="tab" id="tab-alarms" onclick="showTab('alarms')">ALARMS</button>
     </div>
 
-    <div id="phases"></div>
+    <div id="view-burnout"><div id="phases"></div></div>
 
-    <div class="alarm-list">
-      <div class="label" style="margin-bottom:12px">ALL CHECKPOINTS</div>
-      <div id="alarmList"></div>
+    <div id="view-cast" style="display:none">
+      <div class="cast-timer-header">
+        <div class="cast-timer-big" id="castTimerDisplay">00:00</div>
+        <div class="cast-timer-label" id="castTimerLabel">TAP START TO BEGIN CAST SEQUENCE</div>
+        <div class="cast-timer-btns">
+          <button class="btn btn-green" id="castStartBtn" onclick="startCastTimer()" style="margin-top:0">▶ START CAST</button>
+          <button class="btn btn-red" id="castResetBtn" onclick="resetCastTimer()" style="margin-top:0;display:none">↺ RESET</button>
+        </div>
+      </div>
+      <div id="castSteps"></div>
+    </div>
+
+    <div id="view-alarms" style="display:none">
+      <div class="section-card">
+        <div class="section-title">ALL CHECKPOINTS</div>
+        <div id="alarmList"></div>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
-const PHASES = [
-  {
-    id:1, name:"WATER REMOVAL", emoji:"💧",
-    tempF:300, tempC:149,
-    color:"#FF6B35", duration:180,
-    checkpoints:[
-      {offset:45,  label:"Check temp — approaching 149°C / 300°F"},
-      {offset:75,  label:"Confirm holding at 149°C / 300°F"},
-      {offset:135, label:"Still holding — looking good"},
-      {offset:180, label:"⚠️ Phase 1 done — set kiln to 371°C / 700°F"},
-    ]
-  },
-  {
-    id:2, name:"THERMAL TRANSITION", emoji:"🔥",
-    tempF:700, tempC:371,
-    color:"#FF9500", duration:240,
-    checkpoints:[
-      {offset:45,  label:"Should be ~260°C / 500°F"},
-      {offset:120, label:"Should hit 371°C / 700°F — confirm & hold"},
-      {offset:180, label:"Check — ≡ blinking = holding at 371°C"},
-      {offset:240, label:"⚠️ Phase 2 done — set kiln to 732°C / 1350°F"},
-    ]
-  },
-  {
-    id:3, name:"PATTERN BURNOUT", emoji:"🌡️",
-    tempF:1350, tempC:732,
-    color:"#FF3B30", duration:240,
-    checkpoints:[
-      {offset:45,  label:"Should be ~482°C / 900°F"},
-      {offset:90,  label:"Should be ~593°C / 1100°F"},
-      {offset:120, label:"Should hit 732°C / 1350°F — confirm & hold"},
-      {offset:135, label:"Crack door slightly — vent carbon gases"},
-      {offset:165, label:"Peek inside — walls should be white/gray"},
-      {offset:240, label:"⚠️ Phase 3 done — set kiln to 510°C / 950°F"},
-    ]
-  },
-  {
-    id:4, name:"DROP & STABILIZE", emoji:"❄️",
-    tempF:950, tempC:510,
-    color:"#30B0C7", duration:120,
-    checkpoints:[
-      {offset:30,  label:"Check temp dropping correctly"},
-      {offset:60,  label:"Should be near 538°C / 1000°F"},
-      {offset:90,  label:"Confirm stable at 510°C / 950°F"},
-      {offset:120, label:"⚠️ READY TO CAST — load alloy now"},
-    ]
-  },
-  {
-    id:5, name:"CAST", emoji:"⚡",
-    tempF:null, tempC:null,
-    color:"#FFD60A", duration:30,
-    checkpoints:[
-      {offset:0,  label:"Load ECCO alloy into Tooltos crucible"},
-      {offset:15, label:"Heat with light blue flame in circles"},
-      {offset:25, label:"Watch for slump in ingots"},
-      {offset:30, label:"🔥 LAUNCH at medium strength — CAST!"},
-    ]
-  }
+const PHASES=[
+  {id:1,name:"WATER REMOVAL",emoji:"💧",tempC:149,tempF:300,color:"#FF6B35",duration:180,checkpoints:[
+    {offset:30,label:"Check temp — approaching 149°C / 300°F",ramp:false},
+    {offset:60,label:"Should be reaching 149°C / 300°F",ramp:false},
+    {offset:75,label:"Confirm holding 149°C / 300°F — ≡ blinking",ramp:false},
+    {offset:135,label:"Still holding 149°C — investment drying",ramp:false},
+    {offset:180,label:"⚠️ Phase 1 done — set kiln to 200°C / 392°F",ramp:false},
+  ]},
+  {id:2,name:"THERMAL TRANSITION",emoji:"🔥",tempC:371,tempF:700,color:"#FF9500",duration:240,checkpoints:[
+    {offset:0,label:"Set kiln to 200°C / 392°F",ramp:true,note:"Step 1 of 4 — gradual ramp"},
+    {offset:20,label:"~200°C reached — set to 260°C / 500°F",ramp:true,note:"Step 2 of 4"},
+    {offset:40,label:"~260°C reached — set to 315°C / 600°F",ramp:true,note:"Step 3 of 4"},
+    {offset:60,label:"~315°C reached — set to 371°C / 700°F",ramp:true,note:"Step 4 of 4 — final target"},
+    {offset:120,label:"Should hit 371°C / 700°F — confirm & hold",ramp:false},
+    {offset:180,label:"Check — ≡ blinking = holding at 371°C",ramp:false},
+    {offset:240,label:"⚠️ Phase 2 done — set kiln to 450°C / 842°F",ramp:false},
+  ]},
+  {id:3,name:"PATTERN BURNOUT",emoji:"🌡️",tempC:732,tempF:1350,color:"#FF3B30",duration:240,checkpoints:[
+    {offset:0,label:"Set kiln to 450°C / 842°F — crack door slightly",ramp:true,note:"Step 1 of 4"},
+    {offset:20,label:"~450°C reached — set to 550°C / 1022°F",ramp:true,note:"Step 2 of 4"},
+    {offset:40,label:"~550°C reached — set to 650°C / 1202°F",ramp:true,note:"Step 3 of 4"},
+    {offset:60,label:"~650°C reached — set to 732°C / 1350°F",ramp:true,note:"Step 4 of 4 — final target"},
+    {offset:120,label:"Should hit 732°C / 1350°F — confirm & hold",ramp:false},
+    {offset:165,label:"Peek inside — mold walls white/light gray",ramp:false},
+    {offset:210,label:"Still holding — black carbon = hold longer",ramp:false},
+    {offset:240,label:"⚠️ Phase 3 done — set kiln to 600°C / 1112°F",ramp:false},
+  ]},
+  {id:4,name:"DROP & STABILIZE",emoji:"❄️",tempC:510,tempF:950,color:"#30B0C7",duration:120,checkpoints:[
+    {offset:0,label:"Set kiln to 600°C / 1112°F",ramp:true,note:"Step 1 — gradual drop"},
+    {offset:20,label:"~600°C — set to 550°C / 1022°F",ramp:true,note:"Step 2"},
+    {offset:40,label:"~550°C — set to 510°C / 950°F",ramp:true,note:"Final target"},
+    {offset:60,label:"Should be near 510°C / 950°F — hold",ramp:false},
+    {offset:90,label:"Confirm stable at 510°C / 950°F — ≡ blinking",ramp:false},
+    {offset:100,label:"🔥 START TOOLTOS — set to 620°C, load ECCO alloy",ramp:false},
+    {offset:120,label:"⚠️ READY TO CAST — go to CAST tab",ramp:false},
+  ]},
 ];
 
-let schedule = null;
-let ticker = null;
-let notificationsEnabled = false;
-let notifiedCheckpoints = new Set();
+const CAST_STEPS=[
+  {title:"Load flask on vacuum table",desc:"Place flask button-side UP on vacuum table. Ensure centered and seated firmly.",dur:60,color:"#FF6B35"},
+  {title:"Turn on vacuum pump",desc:"Connect hose, turn on vacuum pump. Check pressure gauge — vacuum building.",dur:30,color:"#FF6B35"},
+  {title:"Set Tooltos furnace to 620°C",desc:"Set furnace to 620°C (1148°F) — ECCO Smart-Gold melt point. Do not exceed by more than 50°C.",dur:30,color:"#FF9500"},
+  {title:"Load ECCO alloy into crucible",desc:"Place ingots evenly in graphite crucible. Don't overfill.",dur:60,color:"#FF9500"},
+  {title:"Lower vacuum hood",desc:"Seat aviation-grade plastic hood firmly on rubber gasket. Good seal = no air leaks.",dur:30,color:"#FF9500"},
+  {title:"Monitor alloy — 30–50 min melt",desc:"Watch through hood. ECCO will glow then slowly pool into liquid. Do NOT leave unattended.",dur:2400,color:"#FF3B30"},
+  {title:"🔥 CONFIRM FULL MELT",desc:"Mirror-smooth surface, no solid chunks, fully pooled. This is your GO moment.",dur:30,color:"#FF3B30"},
+  {title:"POUR steadily into sprue",desc:"Pour molten ECCO into flask sprue hole in one steady motion. Vacuum pulls metal through. Do NOT stop mid-pour.",dur:15,color:"#FFD60A"},
+  {title:"Hold vacuum — 30 seconds",desc:"Keep vacuum running after pour. Pulls metal into fine detail. Eliminates porosity.",dur:30,color:"#FFD60A"},
+  {title:"Turn off vacuum — remove flask",desc:"Release vacuum. Lift flask with tongs. Set on heat-safe surface button-side up.",dur:30,color:"#30B0C7"},
+  {title:"Air cool — watch button glow",desc:"Wait 5–10 min. Watch sprue button stop glowing orange. Do NOT quench early — thermal shock cracks casting.",dur:600,color:"#30B0C7"},
+  {title:"Quench in water",desc:"Once button stops glowing, drop flask into water. Plasticast breaks apart easily.",dur:60,color:"#30B0C7"},
+  {title:"✅ Divest, rinse, inspect",desc:"Break away investment, rinse thoroughly. Check for porosity or incomplete fill.",dur:120,color:"#4a9c4a"},
+];
 
-// Load saved session on page load
-window.addEventListener('load', () => {
-  const saved = localStorage.getItem('burnout_start');
-  if (saved) {
-    const startTime = new Date(parseInt(saved));
-    // Only restore if within 24 hours
-    if (Date.now() - startTime < 24 * 60 * 60 * 1000) {
-      buildSchedule(startTime);
-      document.getElementById('inputSection').style.display = 'none';
-      document.getElementById('scheduleSection').style.display = 'block';
-      document.getElementById('startedLabel').textContent = 'STARTED ' + fmt(startTime);
-      renderAlarms();
-      if (ticker) clearInterval(ticker);
-      tick();
-      ticker = setInterval(tick, 1000);
-    } else {
-      localStorage.removeItem('burnout_start');
-    }
+let schedule=null,ticker=null;
+let castRunning=false,castStart=null,castTicker=null,castStepIdx=0,castStepStart=null;
+let savedStartTime=null;
+
+function addMin(d,m){return new Date(d.getTime()+m*60000);}
+function fmt(d){return d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true});}
+function cd(ms){
+  if(ms<=0)return"NOW";
+  const s=Math.floor(ms/1000),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;
+  if(h>0)return`${h}h ${m}m`;if(m>0)return`${m}m ${sec}s`;return`${sec}s`;
+}
+function fmtTimer(sec){
+  const m=Math.floor(sec/60),s=sec%60;
+  return`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+// Send start time to Shortcut via URL scheme
+function sendToShortcut(){
+  if(!savedStartTime){alert('Generate a schedule first.');return;}
+  // Format time as HH:MM for Shortcuts
+  const h=String(savedStartTime.getHours()).padStart(2,'0');
+  const m=String(savedStartTime.getMinutes()).padStart(2,'0');
+  const timeStr=`${h}:${m}`;
+  // Open Shortcuts with the time as input
+  // shortcuts://run-shortcut?name=Burnout%20Timer&input=text&text=HH:MM
+  const url=`shortcuts://run-shortcut?name=Burnout%20Timer&input=text&text=${encodeURIComponent(timeStr)}`;
+  window.location.href=url;
+}
+
+function buildSchedule(start){
+  let cur=new Date(start);
+  schedule={start,phases:PHASES.map(p=>{
+    const ps=new Date(cur);
+    const cps=p.checkpoints.map(cp=>({...cp,time:addMin(ps,cp.offset)}));
+    cur=addMin(ps,p.duration);
+    return{...p,startTime:ps,endTime:new Date(cur),checkpoints:cps};
+  })};
+}
+
+window.addEventListener('load',()=>{
+  const saved=localStorage.getItem('burnout_start');
+  if(saved){
+    const st=new Date(parseInt(saved));
+    if(Date.now()-st<24*60*60*1000){
+      savedStartTime=st;
+      buildSchedule(st);
+      document.getElementById('inputSection').style.display='none';
+      document.getElementById('scheduleSection').style.display='block';
+      document.getElementById('startedLabel').textContent='STARTED '+fmt(st);
+      renderAlarms();renderCastSteps();
+      if(ticker)clearInterval(ticker);
+      tick();ticker=setInterval(tick,1000);
+    }else{localStorage.removeItem('burnout_start');}
   }
 });
 
-async function requestNotifications() {
-  if ('Notification' in window) {
-    const perm = await Notification.requestPermission();
-    if (perm === 'granted') {
-      notificationsEnabled = true;
-      alert('✅ Phone alerts enabled! You\'ll get notified at each checkpoint.');
-    } else {
-      alert('Notifications blocked. You can enable them in Safari Settings → Notifications.');
-    }
-  } else {
-    alert('Add this page to your Home Screen first, then enable notifications.');
-  }
-}
-
-function scheduleNotifications() {
-  if (!notificationsEnabled || !schedule) return;
-  const now = Date.now();
-  schedule.phases.flatMap(p => p.checkpoints).forEach(cp => {
-    const ms = cp.time - now;
-    if (ms > 0) {
-      setTimeout(() => {
-        if (Notification.permission === 'granted') {
-          new Notification('🔥 Burnout Timer', {
-            body: cp.label,
-            icon: '/favicon.ico'
-          });
-        }
-      }, ms);
-    }
-  });
-}
-
-function addMin(d, m) { return new Date(d.getTime() + m*60000); }
-function fmt(d) { return d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true}); }
-function countdown(ms) {
-  if (ms<=0) return "NOW";
-  const s=Math.floor(ms/1000), h=Math.floor(s/3600), m=Math.floor((s%3600)/60), sec=s%60;
-  if (h>0) return `${h}h ${m}m`;
-  if (m>0) return `${m}m ${sec}s`;
-  return `${sec}s`;
-}
-
-function buildSchedule(start) {
-  let cursor = new Date(start);
-  schedule = {
-    start,
-    phases: PHASES.map(p => {
-      const ps = new Date(cursor);
-      const cps = p.checkpoints.map(cp => ({...cp, time: addMin(ps, cp.offset)}));
-      cursor = addMin(ps, p.duration);
-      return {...p, startTime:ps, endTime:new Date(cursor), checkpoints:cps};
-    })
-  };
-}
-
-function generateSchedule() {
-  const val = document.getElementById('startInput').value;
-  if (!val) return;
-  const [h,m] = val.split(':').map(Number);
-  const start = new Date();
-  start.setHours(h,m,0,0);
-
-  // Save to localStorage
-  localStorage.setItem('burnout_start', start.getTime().toString());
-
+function generateSchedule(){
+  const val=document.getElementById('startInput').value;
+  if(!val)return;
+  const[h,m]=val.split(':').map(Number);
+  const start=new Date();start.setHours(h,m,0,0);
+  savedStartTime=start;
+  localStorage.setItem('burnout_start',start.getTime().toString());
   buildSchedule(start);
-
   document.getElementById('inputSection').style.display='none';
   document.getElementById('scheduleSection').style.display='block';
   document.getElementById('startedLabel').textContent='STARTED '+fmt(start);
-  renderAlarms();
-  scheduleNotifications();
-  if (ticker) clearInterval(ticker);
-  tick();
-  ticker = setInterval(tick, 1000);
+  renderAlarms();renderCastSteps();
+  if(ticker)clearInterval(ticker);
+  tick();ticker=setInterval(tick,1000);
 }
 
-function renderAlarms() {
-  const all = schedule.phases.flatMap(p=>p.checkpoints);
-  document.getElementById('alarmList').innerHTML = all.map(cp=>`
+function renderAlarms(){
+  const all=schedule.phases.flatMap(p=>p.checkpoints);
+  document.getElementById('alarmList').innerHTML=all.map(cp=>`
     <div class="alarm-row">
-      <div class="alarm-text">${cp.label}</div>
+      <div class="alarm-text">${cp.ramp?'🔼 ':''}<span style="color:${cp.ramp?'#FF9500':'#aaa'}">${cp.label}</span></div>
       <div class="alarm-time">${fmt(cp.time)}</div>
     </div>`).join('');
 }
 
-function tick() {
-  const now = new Date();
-  const allCps = schedule.phases.flatMap(p=>p.checkpoints).filter(cp=>cp.time>now).sort((a,b)=>a.time-b.time);
-  if (allCps.length>0) {
-    const next = allCps[0];
+function renderCastSteps(){
+  document.getElementById('castSteps').innerHTML=CAST_STEPS.map((s,i)=>`
+    <div class="cast-step-card" id="cstep-${i}">
+      <div class="cast-step-inner">
+        <div class="cast-step-num" style="background:#1a1a1a;border:2px solid ${s.color};color:${s.color}">${i+1}</div>
+        <div class="cast-step-body">
+          <div class="cast-step-title">${s.title}</div>
+          <div class="cast-step-desc">${s.desc}</div>
+          <div class="cast-step-dur">⏱ ${s.dur>=60?Math.floor(s.dur/60)+'m'+(s.dur%60>0?' '+s.dur%60+'s':''):s.dur+'s'}</div>
+          <div class="cast-step-timer" id="ctimer-${i}" style="display:none">00:00</div>
+          <button class="next-step-btn" id="cnext-${i}" style="display:none" onclick="nextCastStep()">NEXT STEP →</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function startCastTimer(){
+  castRunning=true;castStart=Date.now();castStepIdx=0;castStepStart=Date.now();
+  document.getElementById('castStartBtn').style.display='none';
+  document.getElementById('castResetBtn').style.display='block';
+  document.getElementById('castTimerLabel').textContent='CAST IN PROGRESS';
+  highlightCastStep(0);
+  if(castTicker)clearInterval(castTicker);
+  castTicker=setInterval(tickCast,1000);
+}
+
+function tickCast(){
+  const now=Date.now();
+  const total=Math.floor((now-castStart)/1000);
+  const stepElapsed=Math.floor((now-castStepStart)/1000);
+  const step=CAST_STEPS[castStepIdx];
+  document.getElementById('castTimerDisplay').textContent=fmtTimer(total);
+  const el=document.getElementById('ctimer-'+castStepIdx);
+  if(el)el.textContent=fmtTimer(stepElapsed)+' / '+fmtTimer(step.dur);
+  if(stepElapsed>=step.dur&&step.dur<=120&&castStepIdx<CAST_STEPS.length-1){
+    const nb=document.getElementById('cnext-'+castStepIdx);
+    if(nb)nb.style.display='block';
+  }
+}
+
+function highlightCastStep(idx){
+  CAST_STEPS.forEach((_,i)=>{
+    const card=document.getElementById('cstep-'+i);
+    const timer=document.getElementById('ctimer-'+i);
+    const next=document.getElementById('cnext-'+i);
+    if(i<idx){card.className='cast-step-card done';if(timer)timer.style.display='none';if(next)next.style.display='none';}
+    else if(i===idx){card.className='cast-step-card active';if(timer)timer.style.display='block';card.scrollIntoView({behavior:'smooth',block:'nearest'});}
+    else{card.className='cast-step-card';if(timer)timer.style.display='none';if(next)next.style.display='none';}
+  });
+}
+
+function nextCastStep(){
+  if(castStepIdx<CAST_STEPS.length-1){castStepIdx++;castStepStart=Date.now();highlightCastStep(castStepIdx);}
+  else{document.getElementById('castTimerLabel').textContent='✅ CAST COMPLETE';clearInterval(castTicker);}
+}
+
+function resetCastTimer(){
+  clearInterval(castTicker);castRunning=false;castStart=null;castStepIdx=0;castStepStart=null;
+  document.getElementById('castTimerDisplay').textContent='00:00';
+  document.getElementById('castTimerLabel').textContent='TAP START TO BEGIN CAST SEQUENCE';
+  document.getElementById('castStartBtn').style.display='block';
+  document.getElementById('castResetBtn').style.display='none';
+  renderCastSteps();
+}
+
+function showTab(tab){
+  ['burnout','cast','alarms'].forEach(t=>{
+    document.getElementById('view-'+t).style.display=t===tab?'block':'none';
+    document.getElementById('tab-'+t).className='tab'+(t===tab?' active':'');
+  });
+}
+
+function tick(){
+  const now=new Date();
+  const allCps=schedule.phases.flatMap(p=>p.checkpoints).filter(cp=>cp.time>now).sort((a,b)=>a.time-b.time);
+  if(allCps.length>0){
+    const next=allCps[0];
     document.getElementById('nextBanner').style.display='flex';
     document.getElementById('nextText').textContent=next.label;
     document.getElementById('nextTime').textContent=fmt(next.time);
-    const ms = next.time-now;
-    document.getElementById('nextCountdown').textContent=countdown(ms);
+    const ms=next.time-now;
+    document.getElementById('nextCountdown').textContent=cd(ms);
     document.getElementById('nextCountdown').style.color=ms<600000?'#FF3B30':'#FF6B35';
-  } else {
-    document.getElementById('nextBanner').style.display='none';
-  }
+  }else{document.getElementById('nextBanner').style.display='none';}
 
   let ap=0;
-  for (let i=schedule.phases.length-1;i>=0;i--) {
-    if (now>=schedule.phases[i].startTime){ap=i;break;}
-  }
+  for(let i=schedule.phases.length-1;i>=0;i--){if(now>=schedule.phases[i].startTime){ap=i;break;}}
 
-  document.getElementById('phases').innerHTML = schedule.phases.map((phase,pi)=>{
+  document.getElementById('phases').innerHTML=schedule.phases.map((phase,pi)=>{
     const isActive=pi===ap&&now>=phase.startTime&&now<phase.endTime;
     const isDone=now>=phase.endTime;
     const isPending=now<phase.startTime;
     const isNext=pi===ap+1;
     const progress=isActive?Math.min(100,((now-phase.startTime)/(phase.endTime-phase.startTime))*100):isDone?100:0;
     const showCps=isActive||isDone||isNext;
-
-    const tempDisplay = phase.tempF
-      ? `<div class="temp-c" style="color:${phase.color}">${phase.tempC}°C</div>
-         <div class="temp-f" style="color:${phase.color}">${phase.tempF}°F</div>`
-      : `<div class="temp-c" style="color:${phase.color}">GO TIME</div>`;
-
-    const cpsHtml = showCps ? `<div class="checkpoints">${phase.checkpoints.map((cp,ci)=>{
+    const tempDisplay=phase.tempF
+      ?`<div class="temp-c" style="color:${phase.color}">${phase.tempC}°C</div><div class="temp-f" style="color:${phase.color}">${phase.tempF}°F</div>`
+      :`<div class="temp-c" style="color:${phase.color}">GO TIME</div>`;
+    const cpsHtml=showCps?`<div class="checkpoints">${phase.checkpoints.map((cp,ci)=>{
       const cpDone=now>=cp.time;
       const cpNext=!cpDone&&(ci===0||now>=phase.checkpoints[ci-1]?.time);
-      return `<div class="cp" style="opacity:${cpDone?'0.5':'1'}">
+      return`<div class="cp" style="opacity:${cpDone?'0.4':'1'}">
         <div class="dot" style="background:${cpDone?'#2a2a2a':cpNext?phase.color:'#2a2a2a'};border:2px solid ${cpNext?phase.color:'#333'};box-shadow:${cpNext?`0 0 8px ${phase.color}`:'none'}"></div>
-        <div>
-          <div class="cp-text" style="color:${cpDone?'#444':cpNext?'#fff':'#888'}">${cp.label}</div>
-          <div class="cp-time">${fmt(cp.time)} ${!cpDone?`<span style="color:${cpNext?phase.color:'#444'};margin-left:8px">${countdown(cp.time-now)}</span>`:'<span style="color:#2a5c2a;margin-left:8px">✓ done</span>'}</div>
+        <div style="flex:1">
+          <div class="cp-label" style="color:${cpDone?'#444':cpNext?'#fff':'#888'}">${cp.label}${cp.ramp?`<span class="ramp-badge">RAMP</span>`:''}</div>
+          ${cp.note?`<div style="font-size:10px;color:#666;margin-top:2px">${cp.note}</div>`:''}
+          <div class="cp-sub">${fmt(cp.time)} ${!cpDone?`<span style="color:${cpNext?phase.color:'#444'};margin-left:8px">${cd(cp.time-now)}</span>`:'<span style="color:#2a5c2a;margin-left:8px">✓</span>'}</div>
         </div>
       </div>`;
-    }).join('')}</div>` : '';
-
+    }).join('')}</div>`:'';
     const progressHtml=(isActive||isDone)?`<div class="progress-bar"><div class="progress-fill" style="width:${progress}%;background:${phase.color}"></div></div>`:'';
-
-    return `<div class="phase-card" style="background:${isActive?'#111':'#0d0d0d'};border:1px solid ${isActive?phase.color:isDone?'#2a2a2a':'#1a1a1a'};opacity:${isPending?'0.6':'1'}">
+    return`<div class="phase-card" style="background:${isActive?'#111':'#0d0d0d'};border:1px solid ${isActive?phase.color:isDone?'#2a2a2a':'#1a1a1a'};opacity:${isPending?'0.55':'1'}">
       <div class="phase-header" style="border-bottom:${isActive?`1px solid ${phase.color}33`:'none'}">
         <div class="phase-left">
           <span style="font-size:18px">${phase.emoji}</span>
           <div>
-            <div class="phase-num" style="color:${phase.color}">PHASE ${phase.id}</div>
-            <div class="phase-name">${phase.name}</div>
+            <div style="font-size:9px;letter-spacing:3px;color:${phase.color}">PHASE ${phase.id}</div>
+            <div style="font-size:14px;font-weight:bold;letter-spacing:1px">${phase.name}</div>
           </div>
         </div>
-        <div class="temp-block">
-          ${tempDisplay}
-          <div class="phase-time">${fmt(phase.startTime)}</div>
-        </div>
+        <div class="temp-block">${tempDisplay}<div class="phase-time">${fmt(phase.startTime)}</div></div>
       </div>
-      ${progressHtml}
-      ${cpsHtml}
+      ${progressHtml}${cpsHtml}
     </div>`;
   }).join('');
 }
 
-function resetSchedule() {
-  if (!confirm('Reset the burnout schedule?')) return;
+function resetSchedule(){
+  if(!confirm('Reset everything?'))return;
   localStorage.removeItem('burnout_start');
-  schedule=null;
-  if (ticker) clearInterval(ticker);
+  savedStartTime=null;schedule=null;
+  if(ticker)clearInterval(ticker);if(castTicker)clearInterval(castTicker);
   document.getElementById('inputSection').style.display='block';
   document.getElementById('scheduleSection').style.display='none';
   document.getElementById('nextBanner').style.display='none';
